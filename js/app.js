@@ -5,6 +5,45 @@ class Seguro{
       this.año = año;
       this.tipo = tipo;
    }
+
+   cotizarSeguro(){
+      /* Marcas y precios (multiplicador)
+         1 = Americano     1.15
+         2 = Asiático      1.05
+         3 = Europeo       1.35
+      */
+      let precio;
+      const precioBase = 2000;
+      
+      // Asigna un precio específico para cada marca
+      switch(this.marca){
+         case "1": precio = precioBase * 1.15;
+                 break;
+         case "2": precio = precioBase * 1.05;
+                 break;
+         case "3": precio = precioBase * 1.35;
+                 break;
+      }
+
+      let diferenciaAños = añoMax - this.año;
+      let reduccionPrecio = diferenciaAños * 0.03;
+      //Cada año de diferencia hay que reducir el precio del seguro 3%
+      precio = precio - (precio * reduccionPrecio);
+
+      /* Tipos de seguro (aumento en el precio)
+         Básico   = +30%
+         Completo = +50%
+      */
+
+      // Compara el tipo de seguro seleccionado
+      if(this.tipo === "basico"){
+         precio *= 1.30;   // Aumento del 30%
+      }else{
+         precio *= 1.5;    // Aumento del 50%
+      }
+
+      return precio;
+   }
 }
 
 //Clase interfaz
@@ -80,8 +119,9 @@ function enviarFormulario(e){
       // Muestra una interfaz de error cuando algún campo se encuentra vacío
       interfaz.mostrarMensaje("FALTAN DATOS <br> Revisa el formulario y vuelve a intentarlo.", "error");
    }else{
-      // [!!!] FUTURO MENSAJE EN INSTANCIA DE INTERFAZ
-      console.log("Todo correcto");
+      // Instancia de la clase seguro
+      const seguro = new Seguro(marcaSeleccionada, añoSeleccionado, tipoSeguro);
+      let precioSeguro = seguro.cotizarSeguro();
    }
    
 }
