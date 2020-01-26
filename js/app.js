@@ -18,11 +18,11 @@ class Seguro{
       // Asigna un precio específico para cada marca
       switch(this.marca){
          case "1": precio = precioBase * 1.15;
-                 break;
+         break;
          case "2": precio = precioBase * 1.05;
-                 break;
+         break;
          case "3": precio = precioBase * 1.35;
-                 break;
+         break;
       }
 
       let diferenciaAños = añoMax - this.año;
@@ -42,7 +42,7 @@ class Seguro{
          precio *= 1.5;    // Aumento del 50%
       }
 
-      return precio;
+      return precio.toFixed(2);
    }
 }
 
@@ -66,10 +66,53 @@ class Interfaz{
       // del primer .form-group
       cotizarSeguroFormulario.insertBefore(div, document.querySelector(".form-group"));
       
-      // Elimina el mensaje después de 3 segundos
-      /* setTimeout(function(){
-         document.querySelector(".mensaje").remove();
-      },3000); */
+      // En caso de que el tipo sea diferente de error
+      // elimina el mensaje después de 2 segundos
+       if(tipo !== "error"){
+         setTimeout(function(){
+            document.querySelector(".mensaje").remove();
+         },2000);
+      }
+   }
+
+   // Se encarga de generar un <div> con los valores de 
+   // marca, año, tipo y total
+   mostrarResultado(seguro, precioSeguro){
+      const resultado = document.getElementById("resultado");
+      let marca;
+      
+      // Este switch se encarga de introducir un string con
+      // el nombre de la marca correspondiente según su value
+      switch(seguro.marca){
+         case "1": marca = "Americano";
+         break;
+         case "2": marca = "Asiático";
+         break;
+         case "3": marca = "Europeo";
+         break;
+      }
+
+      // Genera un div introduciendo los valores correspondientes
+      const div = document.createElement("div");
+      div.innerHTML = `
+         <p class = "header"> -- Resumen -- </p>
+         Marca : ${marca}        <br>
+         Año   : ${seguro.año}   <br>
+         Tipo  : ${seguro.tipo}  <br>
+         Total : ${precioSeguro} MXN
+      `
+
+      // Se encarga de seleccionar el gif del spinner de carga
+      const spinner = document.querySelector("#cargando img");
+      spinner.style.display = "block";   
+
+      // Después de 2 segundos, oculta el spinner y muestra el <div>
+      // de resultado
+      setTimeout(function(){
+         spinner.style.display = "none";
+         resultado.appendChild(div);
+      },2000);
+
    }
 }
 
@@ -114,14 +157,36 @@ function enviarFormulario(e){
    // Instancia de la clase Interfaz
    const interfaz = new Interfaz();
 
+   //Selecciona el div con las clases erro y mensaje en caso de que exista
+   mensajeError = document.querySelector("div.error.mensaje");
+   
    // Comprueba que no haya campos vacios o sin seleccionar
+   // En caso de que sí los haya, mostrará un <div> con un mensaje de error
+   // En caso de que No los haya, mostrará el resultado de la cotización del seguro
+   // según los valores del formulario seleccionados por el usuario
    if(marcaSeleccionada === "" || añoSeleccionado === "" || tipoSeguro === ""){
+
+      if(mensajeError !== null){
+         mensajeError.remove();
+      }
       // Muestra una interfaz de error cuando algún campo se encuentra vacío
       interfaz.mostrarMensaje("FALTAN DATOS <br> Revisa el formulario y vuelve a intentarlo.", "error");
    }else{
+
+      if(mensajeError !== null){
+         mensajeError.remove();
+      }else{
+         //No hacer nada
+      };
+      const resultadoDiv = document.querySelector("#resultado div");
+      if(resultadoDiv !== null){
+         resultadoDiv.remove();
+      }
       // Instancia de la clase seguro
       const seguro = new Seguro(marcaSeleccionada, añoSeleccionado, tipoSeguro);
       let precioSeguro = seguro.cotizarSeguro();
+      interfaz.mostrarResultado(seguro, precioSeguro);
+      interfaz.mostrarMensaje("Cotizando...", "success");
    }
    
 }

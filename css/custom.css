@@ -62,10 +62,10 @@ header h1 {
 #resultado div {
     border: 1px solid #26C6DA;
     text-align: center;
-    padding: 0  0 20px 0;
+    padding:0px 0px 10px 0px;
 }
 #resultado div p {
-    margin-bottom: 0;
+    margin-left: 0px;;
 }
 #resultado div p.header {
     background-color: #26C6DA;
